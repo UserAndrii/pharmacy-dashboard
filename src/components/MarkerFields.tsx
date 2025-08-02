@@ -1,0 +1,78 @@
+import { Plus, X } from "lucide-react";
+import { Pharmacy } from "@/types/pharmacy";
+
+interface MarkerFieldsProps {
+  markerFields: string[];
+  onAddField: () => void;
+  onRemoveField: (index: number) => void;
+  onUpdateField: (index: number, value: string) => void;
+}
+
+export const MarkerFields: React.FC<MarkerFieldsProps> = ({
+  markerFields,
+  onAddField,
+  onRemoveField,
+  onUpdateField,
+}) => {
+  const availableMarkers: (keyof Omit<Pharmacy, "_id">)[] = [
+    "experience",
+    "ageCategory",
+    "position",
+    "pharmacyType",
+    "dailyPatients",
+    "employeeCount",
+  ];
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-8">
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        Поля маркерів (опціонально)
+      </h2>
+      <p className="text-gray-600 mb-6">
+        Додайте назви полів для спеціального відмічення. Система знайде
+        відповідні значення в комірках та відмітить сусідні комірки зліва цифрою
+        &quot;1&quot;
+      </p>
+
+      <div className="space-y-3">
+        {markerFields.map((field, index) => (
+          <div key={index} className="flex items-center gap-3">
+            <div className="flex-1">
+              <select
+                value={field}
+                onChange={(e) => onUpdateField(index, e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Виберіть поле маркера</option>
+                {availableMarkers.map((marker) => (
+                  <option key={marker} value={marker}>
+                    {marker}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {markerFields.length > 1 && (
+              <button
+                type="button"
+                onClick={() => onRemoveField(index)}
+                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={onAddField}
+        className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+      >
+        <Plus className="w-4 h-4" />
+        Додати поле маркера
+      </button>
+    </div>
+  );
+};
