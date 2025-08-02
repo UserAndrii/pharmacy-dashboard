@@ -4,7 +4,6 @@ import {
   Briefcase,
   Building2,
   Calendar,
-  Delete,
   Edit2,
   Globe,
   MapPin,
@@ -15,6 +14,7 @@ import {
   Users,
   X,
   XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormField } from "./FormField";
@@ -59,6 +59,7 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
   const [mode, setMode] = useState<ModalMode>(initialMode);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<CreatePharmacyData>(initialFormData);
 
@@ -85,11 +86,18 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
       });
     }
     setError("");
+    setShowDeleteConfirm(false);
   }, [pharmacy, initialMode]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
+      if (e.key === "Escape") {
+        if (showDeleteConfirm) {
+          setShowDeleteConfirm(false);
+        } else {
+          handleClose();
+        }
+      }
     };
 
     if (isOpen) {
@@ -101,11 +109,12 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [isOpen, showDeleteConfirm]);
 
   const handleClose = () => {
     setMode(initialMode);
     setError("");
+    setShowDeleteConfirm(false);
     onClose();
   };
 
@@ -118,20 +127,36 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
     setError("");
   };
 
-  const handleDelite = async () => {
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     setLoading(true);
-    setMode("delete");
     setError("");
 
     if (pharmacy) {
-      const response = await instance.delete<Pharmacy>(
-        `/pharmacies/${pharmacy._id}`
-      );
-      if (response) {
-        onPharmacyDelete(pharmacy._id);
-        handleClose();
+      try {
+        const response = await instance.delete<Pharmacy>(
+          `/pharmacies/${pharmacy._id}`
+        );
+        if (response) {
+          onPharmacyDelete(pharmacy._id);
+          handleClose();
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        console.error("Error deleting pharmacy:", err);
+        setError(err.response?.data?.message || "Помилка при видаленні аптеки");
+      } finally {
+        setLoading(false);
+        setShowDeleteConfirm(false);
       }
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
   };
 
   const handleCancel = () => {
@@ -321,7 +346,7 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
-        onClick={handleClose}
+        onClick={showDeleteConfirm ? undefined : handleClose}
       />
 
       <div className="flex min-h-full items-center justify-center p-4">
@@ -343,7 +368,7 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
 
               <div className="flex items-center gap-2">
                 {showActionButtons && (
-                  <div className="flex items-center justify-end gap-4 pr-3">
+                  <div className="hidden md:flex items-center justify-end gap-4 pr-3">
                     {mode === "edit" && (
                       <button
                         onClick={handleCancel}
@@ -380,10 +405,10 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
                       <Edit2 className="w-6 h-6" />
                     </button>
                     <button
-                      onClick={handleDelite}
-                      className="p-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 transition-colors text-cyan-400"
+                      onClick={handleDeleteClick}
+                      className="p-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 transition-colors text-red-400"
                     >
-                      <Trash className="w-6 h-6 text-red-500" />
+                      <Trash className="w-6 h-6" />
                     </button>
                   </div>
                 )}
@@ -419,9 +444,97 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
                 />
               ))}
             </div>
+
+            {showActionButtons && (
+              <div className="flex items-center justify-end gap-4 pr-3 mt-6 md:hidden">
+                {mode === "edit" && (
+                  <button
+                    onClick={handleCancel}
+                    disabled={loading}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    Скасувати
+                  </button>
+                )}
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="p-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[120px] justify-center"
+                >
+                  {loading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      {mode === "create" ? "Створити" : "Зберегти"}
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={handleDeleteCancel}
+          />
+          <div className="relative bg-gradient-to-br from-gray-900 via-red-900 to-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-md border border-red-500/30">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-red-500/20 rounded-full">
+                <AlertTriangle className="w-8 h-8 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">
+                  Підтвердження видалення
+                </h3>
+                <p className="text-gray-300 text-sm">
+                  Цю дію неможливо скасувати
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-300">
+                Ви впевнені, що хочете видалити аптеку{" "}
+                <span className="font-semibold text-white">
+                  {formData.pharmacyName}
+                </span>
+                ?
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDeleteCancel}
+                disabled={loading}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Скасувати
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={loading}
+                className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[100px] justify-center"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Trash className="w-4 h-4" />
+                    Видалити
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

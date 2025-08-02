@@ -1,6 +1,6 @@
 "use client";
-import { Building2, Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Building2, Plus, Search } from "lucide-react";
 
 import instance from "@/lib/api";
 import { SearchBar } from "@/components/SearchBar";
@@ -99,22 +99,22 @@ const PharmacyPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-3">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl mb-6 shadow-2xl">
-              <Building2 className="w-10 h-10 text-white" />
+        <div className="text-center mb-6 sm:mb-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl sm:rounded-2xl mb-3 sm:mb-6 shadow-2xl">
+              <Building2 className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-2 sm:mb-4 text-center sm:text-left">
               База даних аптек
             </h1>
           </div>
-          <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed px-4">
             Знайдіть інформацію про аптеки, контактні дані та відповідальних
             осіб
           </p>
         </div>
 
-        <div className="flex justify-center items-center gap-3">
+        <div className="flex justify-center items-center">
           <SearchBar
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -123,14 +123,14 @@ const PharmacyPage: React.FC = () => {
           >
             <button
               onClick={handleCreateClick}
-              className="inline-flex items-center gap-3 px-6 py-4 min-w-fit bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 w-full min-w-fit bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm sm:text-lg font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl whitespace-nowrap"
             >
-              <Plus className="w-5 h-5" />
-              Створити нову аптеку
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Створити нову аптеку</span>
+              <span className="sm:hidden">Створити</span>
             </button>
           </SearchBar>
         </div>
-
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -170,7 +170,6 @@ const PharmacyPage: React.FC = () => {
             ) : null}
           </>
         )}
-
         <PharmacyModal
           pharmacy={selectedPharmacy}
           isOpen={isModalOpen}
