@@ -41,7 +41,14 @@ export const MarkerFields: React.FC<MarkerFieldsProps> = ({
               <select
                 value={field}
                 onChange={(e) => onUpdateField(index, e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 ${
+                  field &&
+                  availableMarkers.includes(
+                    field as keyof Omit<Pharmacy, "_id">
+                  )
+                    ? "text-black"
+                    : "text-gray-500"
+                }`}
               >
                 <option value="">Виберіть поле маркера</option>
                 {availableMarkers.map((marker) => (
