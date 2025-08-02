@@ -2,7 +2,7 @@ name: Build Next.js App
 
 on:
   push:
-    branches: [main] # або твоя основна гілка
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -25,11 +25,7 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
-      - name: Export (optional, якщо використовуєш static export)
-        run: npm run export
-        if: success()
-
-      - name: Upload production build (optional)
+      - name: Upload production build
         uses: actions/upload-artifact@v4
         with:
           name: nextjs-build
