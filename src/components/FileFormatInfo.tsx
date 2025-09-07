@@ -14,6 +14,10 @@ export const FileFormatInfo: React.FC = () => {
     "@pharmacyType",
     "@dailyPatients",
     "@employeeCount",
+    "@institutionType",
+    "@institutionName",
+    "@dosageForm",
+    "@manufacturer",
   ];
 
   return (

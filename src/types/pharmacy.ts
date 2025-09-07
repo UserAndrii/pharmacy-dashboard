@@ -14,6 +14,10 @@ export interface Pharmacy {
   pharmacyType: string;
   dailyPatients: string;
   employeeCount: string;
+  institutionType: string;
+  institutionName: string;
+  dosageForm: string;
+  manufacturer: string;
 }
 
 export interface CreatePharmacyData {
@@ -31,4 +35,8 @@ export interface CreatePharmacyData {
   pharmacyType: string;
   dailyPatients: string;
   employeeCount: string;
+  institutionType: string;
+  institutionName: string;
+  dosageForm: string;
+  manufacturer: string;
 }

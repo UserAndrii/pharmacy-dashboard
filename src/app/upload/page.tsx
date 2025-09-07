@@ -95,6 +95,10 @@ const UploadPage: React.FC = () => {
     setMarkerFields(updated);
   };
 
+  const setAllMarkerFields = (fields: string[]): void => {
+    setMarkerFields(fields);
+  };
+
   const handleSubmit = async (): Promise<void> => {
     if (!file) {
       setError("Будь ласка, виберіть файл для завантаження");
@@ -197,6 +201,7 @@ const UploadPage: React.FC = () => {
             onAddField={addMarkerField}
             onRemoveField={removeMarkerField}
             onUpdateField={updateMarkerField}
+            onSetAllFields={setAllMarkerFields}
           />
 
           <ProgressBar isUploading={isUploading} progress={uploadProgress} />

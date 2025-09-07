@@ -15,6 +15,8 @@ import {
   X,
   XCircle,
   AlertTriangle,
+  Pill,
+  Factory,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormField } from "./FormField";
@@ -35,6 +37,10 @@ const initialFormData = {
   pharmacyType: "",
   dailyPatients: "",
   employeeCount: "",
+  institutionType: "",
+  institutionName: "",
+  dosageForm: "",
+  manufacturer: "",
 };
 
 interface PharmacyModalProps {
@@ -83,6 +89,10 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
         pharmacyType: pharmacy.pharmacyType,
         dailyPatients: pharmacy.dailyPatients,
         employeeCount: pharmacy.employeeCount,
+        institutionType: pharmacy.institutionType,
+        institutionName: pharmacy.institutionName,
+        dosageForm: pharmacy.dosageForm,
+        manufacturer: pharmacy.manufacturer,
       });
     }
     setError("");
@@ -176,6 +186,10 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
         pharmacyType: pharmacy.pharmacyType,
         dailyPatients: pharmacy.dailyPatients,
         employeeCount: pharmacy.employeeCount,
+        institutionType: pharmacy.institutionType,
+        institutionName: pharmacy.institutionName,
+        dosageForm: pharmacy.dosageForm,
+        manufacturer: pharmacy.manufacturer,
       });
     }
     setMode("view");
@@ -217,6 +231,10 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
       pharmacyType: "Тип аптеки",
       dailyPatients: "Денна кількість пацієнтів",
       employeeCount: "Кількість співробітників",
+      institutionType: "Тип лікувальної установи",
+      institutionName: "Назва лікувальної установи",
+      dosageForm: "Лікарська форма препарату",
+      manufacturer: "Виробник лікарських засобів",
     };
     return labels[field];
   };
@@ -339,6 +357,30 @@ export const PharmacyModal: React.FC<PharmacyModalProps> = ({
       label: "Кількість співробітників",
       icon: Users,
       placeholder: "1-2, 3-5, 5+",
+    },
+    {
+      name: "institutionType" as const,
+      label: "Тип лікувальної установи",
+      icon: Building2,
+      placeholder: "Лікарня, Поліклініка, Немає",
+    },
+    {
+      name: "institutionName" as const,
+      label: "Назва лікувальної установи",
+      icon: Building2,
+      placeholder: "Введіть назву ЛПУ",
+    },
+    {
+      name: "dosageForm" as const,
+      label: "Лікарська форма препарату",
+      icon: Pill,
+      placeholder: "Оральний розчин, Ін'єкційний розчин, Капсули",
+    },
+    {
+      name: "manufacturer" as const,
+      label: "Виробник лікарських засобів",
+      icon: Factory,
+      placeholder: "Вітчизняний, Імпортний, Не має значення",
     },
   ];
 
