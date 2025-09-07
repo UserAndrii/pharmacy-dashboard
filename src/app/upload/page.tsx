@@ -118,9 +118,7 @@ const UploadPage: React.FC = () => {
         (field) => field.trim() !== ""
       );
       if (validMarkerFields.length > 0) {
-        validMarkerFields.forEach((field) => {
-          formData.append("markerFieldNames", field.trim());
-        });
+        formData.append("markerFieldNames", validMarkerFields.join(","));
       }
 
       const response = await instance.post("/excel/upload", formData, {
